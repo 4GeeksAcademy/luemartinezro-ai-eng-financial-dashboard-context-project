@@ -1,10 +1,12 @@
+import { type ReactNode } from 'react'
 import { LayoutDashboard } from 'lucide-react'
 
 interface DashboardHeaderProps {
   period?: string
+  themeToggle?: ReactNode
 }
 
-export function DashboardHeader({ period = '2024 — Full Year' }: DashboardHeaderProps) {
+export function DashboardHeader({ period = '2024 — Full Year', themeToggle }: DashboardHeaderProps) {
   return (
     <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div className="flex items-center gap-3">
@@ -17,6 +19,7 @@ export function DashboardHeader({ period = '2024 — Full Year' }: DashboardHead
         </div>
       </div>
       <div className="flex items-center gap-2">
+        {themeToggle}
         <span className="inline-flex items-center rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
           {period}
         </span>

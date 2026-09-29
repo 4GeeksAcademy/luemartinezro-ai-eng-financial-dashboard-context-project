@@ -3,6 +3,7 @@ import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { KPIRow } from "@/components/dashboard/kpi-row";
 import { IncomeOutcomeChart } from "@/components/dashboard/income-outcome-chart";
 import { ProfitPercentChart } from "@/components/dashboard/profit-percent-chart";
+import { ThemeToggle } from "@/components/dashboard/theme-toggle";
 import {
   type FinancialMovement,
   type KPIMetrics,
@@ -21,6 +22,7 @@ async function fetchFinancialData(): Promise<FinancialMovement[]> {
 }
 
 function App() {
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [metrics, setMetrics] = useState<KPIMetrics | null>(null);
   const [monthlyData, setMonthlyData] = useState<MonthlyDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,11 +44,18 @@ function App() {
       });
   }, []);
 
+  function toggleTheme() {
+    setTheme((prev: "light" | "dark") => (prev === "dark" ? "light" : "dark"));
+  }
+
   return (
-    <main className="dark min-h-screen bg-background text-foreground">
+    <main className={`${theme} min-h-screen bg-background text-foreground`}>
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-8">
-          <DashboardHeader period="2024 - Full Year" />
+          <DashboardHeader
+            period="2024 - Full Year"
+            themeToggle={<ThemeToggle theme={theme} onToggle={toggleTheme} />}
+          />
 
           {error ? (
             <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive-foreground">
