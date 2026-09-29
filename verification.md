@@ -93,6 +93,23 @@ Tampoco se aplican filtros (fechas, categorías, tipo de operación) desde la in
 
 ---
 
+## Specs Técnicos — Nuevas Funcionalidades
+
+Se han creado 3 documentos de especificaciones técnicas en `frontend/specs/` para las funcionalidades solicitadas en `prompst.md`:
+
+| # | Archivo | Funcionalidad | Estado del backend |
+|---|---|---|---|
+| 1 | `01-date-range-filter.md` | Filtro de rango de fechas | ✅ Sin incompatibilidades |
+| 2 | `02-alerts-table.md` | Tabla de alertas de anomalías | ⚠️ Incompatibilidad: media móvil de 3 vs media acumulativa completa |
+| 3 | `03-b2b-vs-b2c-view.md` | Vista comparativa B2B vs B2C | ⚠️ Requiere 4 llamadas paralelas; sin endpoint unificado |
+
+**Incompatibilidades principales documentadas:**
+
+- **Funcionalidad 2:** El backend usa promedio de **todo el histórico** en lugar de rolling window de 3 períodos como pide el spec. Además, la validación del threshold solo tiene `ge=0` (permite >1.0), no valida el límite superior de 1.0.
+- **Funcionalidad 3:** No existe un endpoint único que devuelva datos de ambas líneas de negocio. El frontend debe orquestar 4 llamadas paralelas (2 a `/categories/top` + 2 a `/summary`). Además, el mock solo genera `"sales"` y `"others"` para ingresos, por lo que la tabla de top 5 categorías tendrá poca variedad.
+
+---
+
 ## Resumen
 
 | # | Elemento | Estado | Prioridad |
