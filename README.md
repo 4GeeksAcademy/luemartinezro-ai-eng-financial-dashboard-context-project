@@ -36,6 +36,23 @@ _Financial metrics dashboard with a React + TypeScript frontend and a FastAPI ba
       └─ /SKILL.md
 ```
 
+## Agent skills
+
+`.agents/skills/` currently has four skills, installed with the [`skills` CLI](https://skills.sh):
+
+| Skill | Source | Covers |
+|---|---|---|
+| `accessibility` | `addyosmani/web-quality-skills` | WCAG 2.2 audits (aria-label, focus, alt text, contrast) |
+| `performance` | `addyosmani/web-quality-skills` | Loading budgets, critical rendering path, runtime responsiveness |
+| `vercel-react-best-practices` | `vercel-labs/agent-skills` | React/Next.js performance rules (Next.js-only rules are marked not applicable, since the frontend is a Vite SPA without SSR) |
+| `fe-be-type-sync` | Authored for this repo | See "Gap identificado" below |
+
+Each installed `SKILL.md` was adapted with a short "Adaptation for this project" section. See `memory-bank/agent-skills.md` for the full rationale and `npx skills list` to confirm they're loaded.
+
+### Gap identificado: sincronización de tipos frontend-backend
+
+Este repo combina un backend FastAPI/Pydantic (Python) con un frontend TypeScript, sin generación de esquema compartido (no hay OpenAPI codegen, Zod ni tRPC): los tipos se mantienen sincronizados a mano entre `backend/app/routes.py` y `frontend/src/lib/financial-types.ts`. Ninguna skill comunitaria instalada cubre este riesgo específico de un stack políglota — todas asumen un frontend-only o un full-stack con tipos ya compartidos. Por eso se creó la skill propia `.agents/skills/fe-be-type-sync/SKILL.md`, con la estructura objetivo/inputs/output esperado/criterios de aceptación, para detectar y corregir esa divergencia campo por campo antes de cada commit.
+
 ## How to run locally
 
 ```bash
