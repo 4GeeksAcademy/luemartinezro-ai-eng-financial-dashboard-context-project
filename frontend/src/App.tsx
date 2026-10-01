@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { KPIRow } from "@/components/dashboard/kpi-row";
-import { IncomeOutcomeChart } from "@/components/dashboard/income-outcome-chart";
-import { ProfitPercentChart } from "@/components/dashboard/profit-percent-chart";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
 import {
   type FinancialMovement,
@@ -10,6 +10,32 @@ import {
   type MonthlyDataPoint,
 } from "@/lib/financial-types";
 import { computeKPIs, computeMonthlyData } from "@/lib/financial-utils";
+
+const IncomeOutcomeChart = lazy(() =>
+  import("@/components/dashboard/income-outcome-chart").then((m) => ({
+    default: m.IncomeOutcomeChart,
+  })),
+);
+const ProfitPercentChart = lazy(() =>
+  import("@/components/dashboard/profit-percent-chart").then((m) => ({
+    default: m.ProfitPercentChart,
+  })),
+);
+
+// Matches the chart components' own skeleton dimensions to avoid layout shift when the lazy chunk loads.
+function ChartSkeleton() {
+  return (
+    <Card className="border-border/60">
+      <CardHeader className="pb-4">
+        <Skeleton className="h-5 w-52" />
+        <Skeleton className="h-3 w-64 mt-1" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-[280px] w-full rounded-lg" />
+      </CardContent>
+    </Card>
+  );
+}
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -36,7 +62,7 @@ function App() {
       })
       .catch(() => {
         setError(
-          "No se pudo cargar la informacion financiera. Revisa la API de backend.",
+          "Could not load financial data. Check the backend API connection.",
         );
       })
       .finally(() => {
@@ -63,16 +89,22 @@ function App() {
             </div>
           ) : null}
 
-          <section aria-label="Key performance indicators">
+          <section aria-label="Key performance indicators" aria-busy={loading} aria-live="polite">
             <KPIRow metrics={metrics} loading={loading} />
           </section>
 
           <section
             aria-label="Financial charts"
+            aria-busy={loading}
+            aria-live="polite"
             className="grid grid-cols-1 gap-4 xl:grid-cols-2"
           >
-            <IncomeOutcomeChart data={monthlyData} loading={loading} />
-            <ProfitPercentChart data={monthlyData} loading={loading} />
+            <Suspense fallback={<ChartSkeleton />}>
+              <IncomeOutcomeChart data={monthlyData} loading={loading} />
+            </Suspense>
+            <Suspense fallback={<ChartSkeleton />}>
+              <ProfitPercentChart data={monthlyData} loading={loading} />
+            </Suspense>
           </section>
         </div>
       </div>

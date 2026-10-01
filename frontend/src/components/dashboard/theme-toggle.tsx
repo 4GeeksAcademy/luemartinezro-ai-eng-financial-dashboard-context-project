@@ -16,6 +16,7 @@ export function ThemeToggle({ theme, onToggle }: ThemeToggleProps) {
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
       )}
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      aria-pressed={theme === 'dark'}
       title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
     >
       {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
